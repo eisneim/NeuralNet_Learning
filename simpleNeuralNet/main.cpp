@@ -169,9 +169,9 @@ void Neuron::feedForward(const Layer& prevLayer) {
 
   //sum the previous layer's outputs include bias node
   for (unsigned nn = 0; nn < prevLayer.size(); nn++) {
-    Neuron preNu = prevLayer[nn];
+    Neuron& preNu = prevLayer[nn];
     sum += preNu.getOutputVal() *
-    preNu.m_outputWeights[m_myIndex].weight;
+      preNu.m_outputWeights[m_myIndex].weight;
   }
 
   m_outputVal = Neuron::transferFunction(sum);
@@ -223,6 +223,8 @@ Net::Net(vector<unsigned>& topology) {
       m_layers.back().push_back(Neuron(numOutputs, neuronNum));
       cout << "made a new Neuron" << endl;
     }
+    // force the bias node's output value to 1.0. it's the last neuron
+    m_layers.back().back().setOutputVal(1.0);
   }
 }
 
@@ -300,7 +302,7 @@ void showVectorVals(string label, vector<double> &v)
 
 int main() {
   vector<unsigned> topology;
-  TrainingData trainData("simpleNeuralNet/trainingData.txt");
+  TrainingData trainData("trainingData.txt");
   trainData.getTopology(topology);
 
   Net myNet(topology);
